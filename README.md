@@ -44,9 +44,6 @@ Necesitamos que te registres en la herramienta para poder utilizarla durante el 
 
 https://signup.earthengine.google.com/
 
-### Licencia
-
-Este curso se comparte bajo la licencia Creative Commons Attribution-ShareAlike 4.0 International License.
 
 ### Material
 
@@ -59,3 +56,7 @@ Script de Java utilizados en el curso introductorio de Google Earth Engine
 - Archivos markdown con el resto del código, imágenes y prosa del curso: https://github.com/yabellini/GEE_course_code/tree/master/es
 
 - Presentación: https://github.com/yabellini/GEE_course_code/blob/master/es/Leccion1/Google_Earth_Engine_TallerCAI2019.pdf
+
+### Licencia
+
+Este curso se comparte bajo la licencia Creative Commons Attribution-ShareAlike 4.0 International License para el material y la [Licencia hipocrática](https://firstdonoharm.dev/) para el código.
