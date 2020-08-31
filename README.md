@@ -62,5 +62,6 @@ Script de Java utilizados en el curso introductorio de Google Earth Engine
 Este curso se comparte bajo la licencia Creative Commons Attribution-ShareAlike 4.0 International License para el material y la [Licencia hipocrática](https://firstdonoharm.dev/) para el código.
 
 ### Cómo citar este trabajo
+![](https://zenodo.org/badge/DOI/10.5281/zenodo.4008748.svg)
 
 Yanina Bellini Saibene, & Hernan Elena. (2020, August). yabellini/GEE_course_code: Google Earth Engine desde cero (Version v1.0). Zenodo. http://doi.org/10.5281/zenodo.4008748
