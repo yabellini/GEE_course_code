@@ -129,4 +129,4 @@ Al igual que mostramos anteriormente como dibujar geometrías, es posible defini
 
 ## Resumen: mapa conceptual de la lección
 
-![Mapa Conceptual de la lección 1](img/GEE_Lesson_4.png)
+![Mapa Conceptual de la lección 4](img/GEE_Lesson_4.png)

@@ -17,7 +17,8 @@ Entre los productos de sensores remotos más interesantes se puede mencionar la 
 
 Cada producto tiene un código asociado (_ImageCollection ID_) y una nomenclatura de bandas. El buscador del _Code Editor_ permite ver las colecciones disponibles, el ID y las bandas, presenta una breve explicación del producto y el origen del mismo.
 
-{{< figure src="Buscador.png" title="Busqueda de un recurso e importación en nuestro script" >}}
+![Busqueda de un recurso e importación en nuestro script](img/Buscador.png)
+
 
 
 Para agregarla a nuestro script basta con pulsar el botón de _Import_, pero para efectos de este ejercicio lo agregaremos de forma manual copiando el ImagenCollection ID, en este caso _LANDSAT/LC8_, y copiando el siguiente comando, donde la función objeto _ee.ImageCollection_ indica que el elemento a ser añadido.
@@ -130,7 +131,7 @@ var stackL5 = l5.median().clip(area_estudio);
 Map.addLayer( stackL5, {bands: ['NIR', 'SWIR1', 'GREEN'], min: [0,0,0], max:[1,1,1] } , "Landsat 5 2010 " );
 ```
 
-###○ Generación de índices
+### Generación de índices
 
 Siguiendo con la idea anterior, El stack final, que será utilizado para clasificar, además de contener la bandas seleccionadas de los mosaicos de 2010 y 2016 podría también contener índices calculados a partir de bandas.
 Hay varias maneras de realizar el cálculo:
@@ -193,8 +194,10 @@ Copiar el [siguiente código](https://github.com/yabellini/GEE_course_code/blob/
 Esto generará _FeatureCollections_ con información de los puntos que son cargadas en el código al inicio.
 Al pegar esta sección de código y apoyar el mouse sobre este, preguntará si queremos convertir a registros importados, a lo que le indicamos _Convert_. De esta manera ubica el código de los puntos agregados en una sección diferente (al inicio, en _imports_):
 
-{{< figure src="convertImport.png" >}}
- 
+
+![Mensajes para conmvertir a Feture Collection](img/convertImport.png)
+
+
 Para extraer la información primero debemos unificar todas las clases en un solo FC
 
 ```{js}
@@ -232,9 +235,9 @@ Export.table.toDrive({
 );
 ```
 
-{{< figure src="EjemploTablaExportada.png" >}}
+![Ejemplo de tabla exportada](img/EjemploTablaExportada.png)
 
 
-### Resumen: mapa conceptual de la lección
+## Resumen: mapa conceptual de la lección
 
-![Mapa Conceptual de la lección 1](img/GEE_Lesson_6.png)
+![Mapa Conceptual de la lección 6](img/GEE_Lesson_6.png)

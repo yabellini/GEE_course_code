@@ -97,6 +97,6 @@ Export.table.toDrive({
 );
 ```
 
-### Resumen: mapa conceptual de la lección
+## Resumen: mapa conceptual de la lección
 
-![Mapa Conceptual de la lección 1](img/GEE_Lesson_7.png)
+![Mapa Conceptual de la lección 7](img/GEE_Lesson_7.png)

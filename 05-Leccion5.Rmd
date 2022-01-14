@@ -89,7 +89,7 @@ print(desmonte_con_perimetro);
 Otro ejemplo de map, supongamos que tenemos un archivo separado por comas (CSV) con coordenadas expresadas en grados decimales, como el de la figura siguiente, y queremos generar la geometría para cada Feature del FC.
 
 
-{{< figure src="EjemploCSV.png" title="Archivo CSV de ejemplo con coordenadas decimales" >}}
+![Archivo CSV de ejemplo con coordenadas decimales](EjemploCSV.png)
 
 
 ```{js}
@@ -126,9 +126,8 @@ Export.table.toDrive({
 Una vez ejecutado el script en la solapa _Tasks_ podremos ejecutar con _Run_ la exportación de la tabla al Drive, a Google Cloud Storage o a un Assest. Ejemplo Drive:
 
 
-{{< figure src="ExportarFC.png" title="Exportando una FC a Google Drive" >}}
+![Exportando una FC a Google Drive](img/ExportarFC.png)
 
+## Resumen: mapa conceptual de la lección
 
-### Resumen: mapa conceptual de la lección
-
-![Mapa Conceptual de la lección 1](img/GEE_Lesson_5.png)
+![Mapa Conceptual de la lección 5](img/GEE_Lesson_5.png)

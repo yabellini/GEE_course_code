@@ -11,7 +11,7 @@
 
 
 
-<title>Lección 3 - Datos Vectoriales</title>
+<title>Lección 7 - Clasificaciones Supervisadas</title>
 
 <script src="site_libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -360,113 +360,159 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Lección 3 - Datos Vectoriales</h1>
+<h1 class="title toc-ignore">Lección 7 - Clasificaciones Supervisadas</h1>
 
 </div>
 
 
-<div id="manejo-de-datos-vectoriales" class="section level2">
-<h2>Manejo de Datos Vectoriales</h2>
-<p>Earth Engine maneja datos vectoriales con el tipo <em>ee.Geometry</em>. La especificación GeoJSON describe en detalle el tipo de geometrías soportadas por Earth Engine, incluyendo:</p>
-<ul>
-<li><em>Point</em>: una lista de coordenadas en alguna proyección,</li>
-<li><em>LineString</em>: una lista de puntos,</li>
-<li><em>LinearRing</em>: una <em>LineString</em> cerrada</li>
-<li><em>Polygon</em>: una lista de <em>LinearRings</em> donde la primera es una cáscara y los anillos subsiguientes son agujeros.</li>
-</ul>
-<p>Earth Engine también soporta <a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-multipoint">MultiPoint</a>, <a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-multilinestring">MultiLineString</a> y <a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-multipolygon">MultiPolygon</a>. GeoJSON <em>GeometryCollection</em> también es compatible, aunque tiene el nombre <em>MultiGeometry</em> dentro de Earth Engine.</p>
-<div id="creación-de-geometrías" class="section level3">
-<h3>Creación de Geometrías</h3>
-<p>Vamos a crear y mapear geometrías. Tenemos dos formas. Una a través de la escritura de sentencias y la otra forma a través del mapa.</p>
-<div id="creando-geometrías-mediante-código" class="section level4">
-<h4>Creando geometrías mediante código</h4>
-<pre class="js"><code>//Puntos
-var point = ee.Geometry.Point([-65.409244, -24.727333]);// geometria punto
-//Lineas
-var lineString = ee.Geometry.LineString([[-65.404817, -24.725354],
-[-65.402682, -24.725636], [-65.403004, -24.727897], [-65.403959, -24.727829 ]]); //linea de puntos
+<p>Las clasificaciones supervisadas se realizan cuando se tienen definidas las clases y se dispone de información de casos correspondientes a esas clases (información de campo). Los distintos clasificadores se entrenan con la información de campo disponible a partir del comportamiento en las distintas bandas consideradas. <strong>La evaluación del resultado de una clasificación requiere disponer de datos independientes a los utilizados para el entrenamiento.</strong> Estos datos se suelen llamar de testing o validación.</p>
+<p>Una de las primeras tareas a realizar para poder realizar la clasificación supervisada es separar el conjunto de datos para entrenamiento y validación. La plataforma permite generar atributos (llamado <em>random</em> en este caso) con números al azar mediante la función <em>randomColumn</em> y agregarlos al <em>FeatureCollection</em> que contiene el set de datos. La función genera valores entre 0 y 1; requiere indicar el <em>FeatureCollection</em> y un valor inicial (semilla) para generar los números al azar (<em>seed</em>):</p>
+<pre class="js"><code>// Separación de set de datos (polígonos) para entrenamiento y validación
+// generación de atributo con números al azar (columna &quot;random&quot;)
+// para hacer muestreo
 
-//Anillo
-var linearRing = ee.Geometry.LinearRing(
-    [[-65.407033, -24.726395 ],[-65.407312, -24.727828],[-65.406632, -24.727128]  ,[-65.407033, -24.726395]] );
-
-//Rectangulos
-var rectangulo = ee.Geometry.Rectangle([-65.408418, -24.728688,-65.407839, -24.729896 ]);
-
-//Poligonos
-var vertices = [ [-65.410024, -24.728817], [-65.410383, -24.728763], [-65.410357, -24.728608],[-65.41018, -24.728632],[-65.41011, -24.728603],[-65.409992, -24.728661] ];
-var poligono = ee.Geometry.Polygon( vertices );
-
- 
-// Mapeo de Geometrías
-Map.addLayer(point,{&#39;color&#39;:&#39;00FF11&#39;} ,&#39;Punto&#39;);
-Map.addLayer(lineString,{&#39;color&#39;:&#39;CC0011&#39;} ,&#39;Linea&#39;);
-Map.addLayer(linearRing,{&#39;color&#39;:&#39;CC0011&#39;} ,&#39;Anillo&#39;);
-Map.addLayer(rectangulo,{&#39;color&#39;:&#39;00FF11&#39;} ,&#39;Rectangulo&#39;);
-Map.addLayer(poligono,{&#39;color&#39;:&#39;CC0011&#39;} ,&#39;Poligono&#39;);
-Map.centerObject(point,16);</code></pre>
+var seed = 2015;
+puntos = puntos.randomColumn(&#39;random&#39;, seed);
+print (&#39;Puntos random&#39;,puntos)</code></pre>
 <script type="text/javascript">
-//Puntos
-var point = ee.Geometry.Point([-65.409244, -24.727333]);// geometria punto
-//Lineas
-var lineString = ee.Geometry.LineString([[-65.404817, -24.725354],
-[-65.402682, -24.725636], [-65.403004, -24.727897], [-65.403959, -24.727829 ]]); //linea de puntos
+// Separación de set de datos (polígonos) para entrenamiento y validación
+// generación de atributo con números al azar (columna "random")
+// para hacer muestreo
 
-//Anillo
-var linearRing = ee.Geometry.LinearRing(
-    [[-65.407033, -24.726395 ],[-65.407312, -24.727828],[-65.406632, -24.727128]  ,[-65.407033, -24.726395]] );
-
-//Rectangulos
-var rectangulo = ee.Geometry.Rectangle([-65.408418, -24.728688,-65.407839, -24.729896 ]);
-
-//Poligonos
-var vertices = [ [-65.410024, -24.728817], [-65.410383, -24.728763], [-65.410357, -24.728608],[-65.41018, -24.728632],[-65.41011, -24.728603],[-65.409992, -24.728661] ];
-var poligono = ee.Geometry.Polygon( vertices );
-
- 
-// Mapeo de Geometrías
-Map.addLayer(point,{'color':'00FF11'} ,'Punto');
-Map.addLayer(lineString,{'color':'CC0011'} ,'Linea');
-Map.addLayer(linearRing,{'color':'CC0011'} ,'Anillo');
-Map.addLayer(rectangulo,{'color':'00FF11'} ,'Rectangulo');
-Map.addLayer(poligono,{'color':'CC0011'} ,'Poligono');
-Map.centerObject(point,16);
+var seed = 2015;
+puntos = puntos.randomColumn('random', seed);
+print ('Puntos random',puntos)
 </script>
-<p><a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-point">ee.Geometry.Point</a> es la llamada a la API Earth Engine que recibe dos parámetros: una lista <em>ee.List([])</em> con las coordenadas y el segundo que es opcional una proyección que puede ser especificada como código EPSG [1]. El valor predeterminado es EPSG:4326 (WGS84 Lat/Lon).</p>
-<p><a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-linestring">ee.Geometry.LineString</a> recibe una lista de puntos y parámetros opcionales.</p>
-<p><a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-linearring">ee.Geometry.LinearRing</a> recibe una lista de puntos que a diferencia de LineString comienza y termina con el mismo punto para poder cerrar el anillo. También tiene parámetros opcionales.</p>
-<p><a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-rectangle">ee.Geometry.Rectangle</a> recibe una lista con esquinas mínimas y máximas del rectángulo, como una lista de dos puntos en formato de coordenadas GeoJSON ‘Point’ o una lista de dos <em>ee.Geometry</em> que describen un punto, o una lista de cuatro números en el orden <em>xMin, yMin , xMax, yMax</em>.</p>
-<p><a href="https://developers.google.com/earth-engine/apidocs/ee-geometry-polygon">ee.Geometry.Polygon</a> recibe una lista de anillos que definen los límites del polígono. Puede ser una lista de coordenadas en el formato ‘Polygon’ de GeoJSON, o una lista de ee.Geometry que describe un LinearRing. El resto de los parámetros son similares al resto de las geometrías.</p>
-</div>
-<div id="creando-geometrías-mediante-el-mapa" class="section level4">
-<h4>Creando geometrías mediante el mapa</h4>
-<p>Las opciones para dibujar están ubicadas en el sector superior izquierdo del mapa. Las herramientas disponibles permiten activar el dibujado de geometrías múltiples de: puntos, líneas y polígonos.Para dejar de dibujar se hace clic en la mano de la izquierda.</p>
-<div class="figure">
-<img src="img/GeometriasDesdeMapas.png" alt="" />
-<p class="caption">Herramientas para dibujar geometrías de puntos, lineas y pokígonos usando el mapa de GEE</p>
-</div>
-<p>Las geometrías creadas se incorporarán al codigo en la sección <em>import</em> (en el panel de Script). Una vez que se activa la herramienta esta se habilita para poder dibujar. Se asigna un color al azar y cada figura que se trace formará parte de una geometría múltiple. En la configuración predeterminada de la instanciación de un objeto <em>ee.Geometry.XXXXX</em> este se crea como <em>EPSG:4326</em>, es decir, será una geometría geodésica.</p>
-</div>
-</div>
-<div id="operaciones-con-geometrías" class="section level3">
-<h3>Operaciones con Geometrías</h3>
-<p>Earth Engine admite una amplia variedad de operaciones en objetos <a href="https://developers.google.com/earth-engine/apidocs/ee-geometry">Geometry</a>. Estos incluyen operaciones en geometrías individuales tales como calcular un buffer, centroide, bounding box, perímetro, envolvente convexa, etc.</p>
-<p>Utilizando la definición del polígono de la anterior vamos a realizar algunas operaciones de geometrías:</p>
-<pre class="js"><code>print(&#39;Área: &#39;, poligono.area());
-// Todos los valores de mediciones de distancias vienen expresados en metros.
-// asi que para km2 : poligono.area().divide(1000 * 1000));</code></pre>
+<p>Esto nos permitirá hacer un muestreo, seleccionando filas que contengan cierto rango de números generados al azar (mayores o menores a cierto valor umbral). Para entrenar el algoritmo de clasificación se requiere extraer información de las imágenes para los puntos seleccionados, incluyendo en las salidas los atributos clase y “random”:</p>
+<pre class="js"><code>// extracción de información incluyendo atributos clase y &quot;random&quot;
+var set_datos = stack_completo.sampleRegions({
+  collection: puntos,
+  properties: [&#39;clase&#39;,&#39;random&#39;],
+  scale: 30
+});
+
+print (&#39; set datos &#39;,set_datos);</code></pre>
 <script type="text/javascript">
-print('Área: ', poligono.area());
-// Todos los valores de mediciones de distancias vienen expresados en metros.
-// asi que para km2 : poligono.area().divide(1000 * 1000));
+// extracción de información incluyendo atributos clase y "random"
+var set_datos = stack_completo.sampleRegions({
+  collection: puntos,
+  properties: ['clase','random'],
+  scale: 30
+});
+
+print (' set datos ',set_datos);
+</script>
+<p>Posteriormente se subdivide el <em>FeatureCollection</em> con el set de datos en Entrenamiento (<em>training</em>) y Validación (<em>testing</em>). Se selecciona un umbral de separación de los valores al azar generados entre 0 y 1 (atributo <em>random</em>). En este caso, se seleccionan los valores mayores o iguales a 0.6 para entrenamiento y los menores a 0.6 para validación. Se pueden ver en consola los nuevos set de datos generados:</p>
+<pre class="js"><code>// Separación entre Entrenamiento y validación. Identificar umbral de separación
+var training = set_datos.filterMetadata(&#39;random&#39;, &#39;not_less_than&#39;, 0.6);
+var testing = set_datos.filterMetadata(&#39;random&#39;, &#39;less_than&#39;, 0.6);
+
+print (&quot;Set de datos entrenamiento&quot;, training);
+print (&quot;Set de datos validación&quot;, testing);
+</code></pre>
+<script type="text/javascript">
+// Separación entre Entrenamiento y validación. Identificar umbral de separación
+var training = set_datos.filterMetadata('random', 'not_less_than', 0.6);
+var testing = set_datos.filterMetadata('random', 'less_than', 0.6);
+
+print ("Set de datos entrenamiento", training);
+print ("Set de datos validación", testing);
+
+</script>
+<div id="entrenamiento" class="section level3">
+<h3>Entrenamiento</h3>
+<p>Aquí debemos seleccionar el algoritmo de clasificación, el set de datos de entrenamiento (<em>training</em>), el atributo de separación en clases (<em>clase</em>) y las bandas seleccionadas. En este caso usamos el algoritmo <em>Random Forest</em>:</p>
+<pre class="js"><code>// Entrenamiento
+var bandas_sel = [&#39;BLUE&#39;,&#39;GREEN&#39;,&#39;RED&#39;, &#39;NIR&#39;, &#39;SWIR1&#39;,&#39;SWIR2&#39;,&#39;NDVIL5&#39;,&#39;BLUE_1&#39;,&#39;GREEN_1&#39;,&#39;RED_1&#39;, &#39;NIR_1&#39;, &#39;SWIR1_1&#39;,&#39;SWIR2_1&#39;,&#39;NDVIL8&#39;];
+var trained = ee.Classifier.randomForest().train(training, &#39;clase&#39;, bandas_sel);</code></pre>
+<script type="text/javascript">
+// Entrenamiento
+var bandas_sel = ['BLUE','GREEN','RED', 'NIR', 'SWIR1','SWIR2','NDVIL5','BLUE_1','GREEN_1','RED_1', 'NIR_1', 'SWIR1_1','SWIR2_1','NDVIL8'];
+var trained = ee.Classifier.randomForest().train(training, 'clase', bandas_sel);
+</script>
+<p>Una vez entrenado el modelo, se lo aplica a una imagen y se genera la clasificación. La misma también puede ser exportada a Geotiff o al Assest.</p>
+<pre class="js"><code>// clasificación con el modelo entrenado
+var classified = stack_completo.select(bandas_sel).classify(trained).clip(area_estudio);
+Map.addLayer(classified, {min:1, max:3, palette: [&#39;d63000&#39;, &#39;98ff00&#39;,&#39;0b4a8b&#39;]}, &#39;Clasificacion&#39;);
+print(classified);
+
+// Exportar imagen de clasificación
+Export.image.toDrive({
+  image:classified,
+  description: &#39;clasificacion&#39;,
+  scale: 30,
+  region: area_estudio
+});</code></pre>
+<script type="text/javascript">
+// clasificación con el modelo entrenado
+var classified = stack_completo.select(bandas_sel).classify(trained).clip(area_estudio);
+Map.addLayer(classified, {min:1, max:3, palette: ['d63000', '98ff00','0b4a8b']}, 'Clasificacion');
+print(classified);
+
+// Exportar imagen de clasificación
+Export.image.toDrive({
+  image:classified,
+  description: 'clasificacion',
+  scale: 30,
+  region: area_estudio
+});
 </script>
 </div>
+<div id="generación-de-matriz-de-confusión-y-resultados." class="section level3">
+<h3>Generación de Matriz de Confusión y resultados.</h3>
+<p>La herramienta permite calcular la matriz de confusión, y estimar exactitud general, de usuario y de productor e índice Kappa.</p>
+<pre class="js"><code>// Generación de matriz de confusión y resultados
+var validation = testing.classify(trained);
+var errorMatrix = validation.errorMatrix(&#39;clase&#39;, &#39;classification&#39;);
+
+print(&#39;Matriz de Confusión:&#39;, errorMatrix);
+print(&#39;Exactitud General:&#39;, errorMatrix.accuracy());
+print(&#39;Indice Kappa:&#39;, errorMatrix.kappa());
+print(&#39;Exactitudes de Usuario:&#39;, errorMatrix.consumersAccuracy());
+print(&#39;Exactitudes de Productor:&#39;, errorMatrix.producersAccuracy());
+
+// exportar matriz de confusion como csv
+var err = ee.FeatureCollection( ee.Feature(null, {
+  &#39;matrix&#39;: errorMatrix.getInfo()
+}));
+print (&#39;Err&#39;,err);
+
+Export.table.toDrive({
+    &#39;collection&#39;: err,
+    &#39;description&#39;: &#39;CM_tutorial_2&#39;,
+    &#39;fileNamePrefix&#39;: &#39;CM_tutorial_2&#39;,
+    &#39;fileFormat&#39;: &#39;CSV&#39;}
+);</code></pre>
+<script type="text/javascript">
+// Generación de matriz de confusión y resultados
+var validation = testing.classify(trained);
+var errorMatrix = validation.errorMatrix('clase', 'classification');
+
+print('Matriz de Confusión:', errorMatrix);
+print('Exactitud General:', errorMatrix.accuracy());
+print('Indice Kappa:', errorMatrix.kappa());
+print('Exactitudes de Usuario:', errorMatrix.consumersAccuracy());
+print('Exactitudes de Productor:', errorMatrix.producersAccuracy());
+
+// exportar matriz de confusion como csv
+var err = ee.FeatureCollection( ee.Feature(null, {
+  'matrix': errorMatrix.getInfo()
+}));
+print ('Err',err);
+
+Export.table.toDrive({
+    'collection': err,
+    'description': 'CM_tutorial_2',
+    'fileNamePrefix': 'CM_tutorial_2',
+    'fileFormat': 'CSV'}
+);
+</script>
 </div>
 <div id="resumen-mapa-conceptual-de-la-lección" class="section level2">
 <h2>Resumen: mapa conceptual de la lección</h2>
 <div class="figure">
-<img src="img/GEE_Lesson_3.png" alt="" />
-<p class="caption">Mapa Conceptual de la lección 3</p>
+<img src="img/GEE_Lesson_7.png" alt="" />
+<p class="caption">Mapa Conceptual de la lección 7</p>
 </div>
 </div>
 

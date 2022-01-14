@@ -83,4 +83,4 @@ print('Área: ', poligono.area());
 
 ## Resumen: mapa conceptual de la lección
 
-![Mapa Conceptual de la lección 1](img/GEE_Lesson_3.png)
+![Mapa Conceptual de la lección 3](img/GEE_Lesson_3.png)

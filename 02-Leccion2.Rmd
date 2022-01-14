@@ -149,4 +149,4 @@ print (sumatoria);
 
 ## Resumen: mapa conceptual de la lección
 
-![Mapa Conceptual de la lección 1](img/GEE_Lesson_2.png)
+![Mapa Conceptual de la lección 2](img/GEE_Lesson_2.png)
