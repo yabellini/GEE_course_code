@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Google Earth Engine desde cero</title>
+
+<script src="site_libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Procesando datos espaciales con R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Temas
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-introduction.html">Introducción</a>
+    </li>
+    <li>
+      <a href="02-entorno_de_trabajo.html">Entorno de trabajo</a>
+    </li>
+    <li>
+      <a href="03-tareas_basicas.html">Tareas básicas</a>
+    </li>
+    <li>
+      <a href="04-clasificacion_supervisada.html">Clasificación supervisada</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/yabellini/curso_rgee">Repo</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Google Earth Engine desde cero</h1>
+
+</div>
+
+
+<div id="de-qué-se-trata-este-curso" class="section level2">
+<h2>¿De qué se trata este curso?</h2>
+<p>Este curso en español fue desarrollado con las siguientes personas en mente:</p>
+<ul>
+<li><em>René</em> tiene 35 años y posee un título en ingeniería agronómica. Trabaja con datos espaciales y de sensores remotos desde hace 5 años. Sus herramientas de trabajo incluyen QGIS, ENVI y gvSIG. Conoce los diferetnes catálogos de imágenes satelitales disponibles y como descargarlas. También conoce que tipo de uso se le puede dar a cada imágen, como por ejemplo que tipo de indices pueden calcularse y para qué utilizar cada uno de ellos. Como parte de su trabajo debe analizar imagenes a nivel de lote de productor pero también regionalmente. Ha escuchado hablar de geotecnologías en la nube pero no tiene experiencia utilizando estas herramientas. Tampoco programa en ningún lenguaje de programación (aunque ha utilizado algunos códigos de Python dentro de QGIS y algo de visual basic script en Excel).</li>
+</ul>
+<p>Este curso se dictó en el marco del <a href="http://48jaiio.sadio.org.ar/Anales/Cai/Presentacion">Congreso de Agroinformática 2019</a>.</p>
+</div>
+<div id="objetivo" class="section level2">
+<h2>Objetivo</h2>
+<p>Presentar a las y los asistentes la plataforma Google Earth Engine y como utilizarla con información espacial raster y vectorial.</p>
+</div>
+<div id="contenido" class="section level2">
+<h2>Contenido</h2>
+<ol style="list-style-type: decimal">
+<li><p>¿Qué es Google Earth Engine?</p></li>
+<li><p>Plataforma GEE</p></li>
+</ol>
+<ul>
+<li>2.1. Editor de Código</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Programando</li>
+</ol>
+<ul>
+<li><p>3.1. Conceptos Básicos</p></li>
+<li><p>3.2. Tipos de datos básicos de Java Scripts</p></li>
+<li><p>3.3. Funciones</p></li>
+<li><p>3.4. Objetos de GEE</p></li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li>Gestión de datos Vectoriales</li>
+</ol>
+<ul>
+<li><p>4.1. Creación de Geometrías</p></li>
+<li><p>4.2. Operaciones con Geometrías</p></li>
+<li><p>4.3. Features</p></li>
+<li><p>4.4. Features Collections</p></li>
+<li><p>4.5. Operaciones con FeaturesCollection</p></li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Gestión de datos Raster</li>
+</ol>
+</div>
+<div id="requisitos-previos" class="section level2">
+<h2>Requisitos previos</h2>
+<p>Necesitamos que te registres en la herramienta para poder utilizarla durante el curso, para ello debes entrar en este link:</p>
+<p><a href="https://signup.earthengine.google.com/" class="uri">https://signup.earthengine.google.com/</a></p>
+</div>
+<div id="quienes-somos" class="section level2">
+<h2>¿Quienes somos?</h2>
+<p><strong>Yanina Bellini Saibene</strong></p>
+<p><img src="img/yani_circle.png" alt="Foto de Yani" width="100" height="100" align="left" style="margin:10px"/></p>
+<p>Yanina Bellini Saibene, MSc. Lic. Es investigadora titular en el Instituto Nacional de Tecnología Agropecuaria (INTA, Argentina). Aplica sus conocimientos de informática y ciencia de datos para llevar los desarrollos tecnológicos a las regiones rurales de Argentina. Coordina la Red Nacional de Modelización de Agroecosistemas en el INTA. También desarrolla software para apoyar la investigación y la educación. Es profesora de grado y posgrado en varias universidades de Argentina y Uruguay, enseñando Ciencia de Datos aplicada y desarrollando cursos abiertos y tutoriales para enseñar habilidades técnicas en el manejo de datos. Es trainer e instructora de <a href="https://carpentries.org/">The Carpentries</a> e instructora certificada de <a href="https://education.rstudio.com/trainers/people/bellini_saibene+yanina/">RStudio</a>. Tambiés es miembro del Executive Council de The Carpentries y Conferences Team Lead de <a href="https://forwards.github.io/">Forwards</a>. Es cofundadora y miembro del Core-Team de <a href="http://metadocencia.org/">MetaDocencia</a>. Forma parte del equipo de <a href="https://rladies.org/">R-Ladies Global</a>, preside varias conferencias internacionales (useR! 2021, LatinR, JAIIO) y es conferencista internacional. También lidera y participa en la traducción comunitaria de material educativo y técnico al español, como <a href="https://teachtogether.tech/es/index.html">Teaching Tech Together</a>, <a href="https://es.r4ds.hadley.nz/">R4DS</a> y lecciones de The Carpentries.</p>
+<p><a href="https://yabellini.netlify.com/">yabellini.netlify.com</a> <a href="https://twitter.com/yabellini">@yabellini</a></p>
+<p><img src="img/elena.hernan.jpg" alt="Foto de Hernán" width="100" height="100" align="left" style="margin:10px"/></p>
+<p><strong>Hernán Javier Elena</strong></p>
+<p>Es Licenciado en Informática por la Universidad Argentina de la Empresa (UADE). Curso sus estudios de postgrado en la Universidad de Girona (España) obteniendo el título de Máster UNIGIS en Gestión de Sistemas de Información Geográfica (2012). Se desempeña desde 2004 como investigador de INTA en el Laboratorio de Teledetección y SIG (Grupo de Recursos Naturales) del INTA EEA Cerrillos.</p>
+<p>Se especializa en: Gestión de bases de datos espaciales (Geodatabases en entorno multiusuario), SIG y Teledetección para el Ordenamiento Territorial (Agua, suelo, uso de la tierra), Software SIG libre – investigación e implementación, Red de información agroclimática, Servidores de datos espaciales con software libre – IDE y Webmaster.</p>
+<p><a href="https://inta.gob.ar/personas/elena.hernan">https://inta.gob.ar/personas/elena.hernan</a></p>
+</div>
+<div id="licencia" class="section level2">
+<h2>Licencia</h2>
+<p><a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es_ES"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /> Todo el material de este curso está bajo la licencia <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es_ES">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+<p>El código fuente de estos materiales y la página web pueden encontrarse en <a href="https://github.com/yabellini/GEE_course_code" class="uri">https://github.com/yabellini/GEE_course_code</a>.</p>
+<div id="cómo-citar-este-trabajo" class="section level3">
+<h3>Cómo citar este trabajo</h3>
+<p><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4008748.svg" /></p>
+<p>Puedes citar este recurso como:</p>
+<blockquote>
+<p>Yanina Bellini Saibene, &amp; Hernan Elena. (2020, August). yabellini/GEE_course_code: Google Earth Engine desde cero (Version v1.0). Zenodo. <a href="http://doi.org/10.5281/zenodo.4008748" class="uri">http://doi.org/10.5281/zenodo.4008748</a></p>
+</blockquote>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

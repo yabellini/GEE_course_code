@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Lección 2 - Java Script para GEE</title>
+
+<script src="site_libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Google Earth Engine desde cero</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Temas
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-Leccion1.html">Lección 1 - Google Earth Engine</a>
+    </li>
+    <li>
+      <a href="02-Leccion2.html">Lección 2 - Java Script para GEE</a>
+    </li>
+    <li>
+      <a href="03-Leccion3.html">Lección 3 - Datos Vectoriales</a>
+    </li>
+    <li>
+      <a href="04-Leccion4.html">Lección 4 -Features y Colecciones de Features</a>
+    </li>
+    <li>
+      <a href="05-Leccion5.html">Lección 5 - Operaciones sobre FeaturesCollection</a>
+    </li>
+    <li>
+      <a href="06-Leccion6.html">Lección 6 - Manejo de datos rasters</a>
+    </li>
+    <li>
+      <a href="07-Leccion7.html">Lección 7 - Clasificaciones Supervisadas</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/yabellini/GEE_course_code">Repo</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Lección 2 - Java Script para GEE</h1>
+
+</div>
+
+
+<div id="conceptos-básicos" class="section level2">
+<h2>Conceptos básicos</h2>
+<div id="tipos-de-datos-básicos-de-java-scripts" class="section level3">
+<h3>Tipos de datos básicos de Java Scripts</h3>
+<p>Una variable es un espacio en la memoria de la computadora al cual se le asigna un numbre y puede contener datos. El valor de una variable puede cambiar después que se la define. Para definir una variable es necesario anteponer la palabra <code>var</code>. Existen diferentes tipos de variables dependiendo del tipo de dato que van a contener:</p>
+<p><strong>Strings:</strong> variables de tipo textos o cadenas de caracteres, se utilizan las comillas simple o dobles para definir una cadena.</p>
+<pre class="js"><code>// Usamos comillas simples o dobles para crear un string
+var tipoStrings = &#39;Esta variable contiene un texto &#39;;
+print( tipoStrings );</code></pre>
+<script type="text/javascript">
+// Usamos comillas simples o dobles para crear un string
+var tipoStrings = 'Esta variable contiene un texto ';
+print( tipoStrings );
+</script>
+<p><strong>Números:</strong> Variable que almacena números. En Java no se diferencias los enteros de los decimales, todos los números se guardan como decimales.</p>
+<pre class="js"><code>// Asignamos un número a una variable
+var numero = 38; // se usa &#39;.&#39; (punto) para coma decimal
+print(&#39;El valor es:&#39;, numero);</code></pre>
+<script type="text/javascript">
+// Asignamos un número a una variable
+var numero = 38; // se usa '.' (punto) para coma decimal
+print('El valor es:', numero);
+</script>
+<p><strong>Listas:</strong> Las listas las definimos con corchetes [ ]. Las listas pueden contener más de un valor.</p>
+<pre class="js"><code>// Lista de números
+var listDeNumeros = [0, 1, 1, 2, 3, 5];
+print(&#39;Lista de Números:&#39;, listDeNumeros);</code></pre>
+<script type="text/javascript">
+// Lista de números
+var listDeNumeros = [0, 1, 1, 2, 3, 5];
+print('Lista de Números:', listDeNumeros);
+</script>
+<p>Las listas también pueden almacenar strings u otros objetos.</p>
+<pre class="js"><code>// Lista de strings.
+var listDeStrings = [&#39;BLUE&#39;, &#39;GREEN&#39;, &#39;RED&#39;, &#39;NIR&#39;, &#39;SWIR1&#39;,&#39;SWIR2&#39;];
+print(&#39;Lista de strings:&#39;, listDeStrings);</code></pre>
+<script type="text/javascript">
+// Lista de strings.
+var listDeStrings = ['BLUE', 'GREEN', 'RED', 'NIR', 'SWIR1','SWIR2'];
+print('Lista de strings:', listDeStrings);
+</script>
+<p><strong>Objetos:</strong> En JavaScript los objetos son diccionarios de pares <em>clave: valor</em>. Para crear un objeto (o diccionario) se utilizan las llaves { }. Este diccionario podrá contener valores diferentes tipos de datos.</p>
+<pre class="js"><code>// Usamos las llaves {} para hacer un diccionario de pares clave:valor
+var object = {
+  unString: &#39;Taller de GEE&#39;, 
+  unNumero: 99,
+  unaLista: [&#39;BLUE&#39;, &#39;NIR&#39;, &#39;GREEN&#39;]
+};
+
+print(&#39;Diccionario:&#39;, object);
+
+// Para acceder al valor de un diccionario se utiliza la clave y los corchetes [ ].
+print(&#39;Imprime la clave unString:&#39;, object[&#39;unString&#39;]);
+
+// También se puede acceder utilizando la notación con punto.
+print(&#39;Print unaLista:&#39;, object.unaLista);</code></pre>
+<script type="text/javascript">
+// Usamos las llaves {} para hacer un diccionario de pares clave:valor
+var object = {
+  unString: 'Taller de GEE', 
+  unNumero: 99,
+  unaLista: ['BLUE', 'NIR', 'GREEN']
+};
+
+print('Diccionario:', object);
+
+// Para acceder al valor de un diccionario se utiliza la clave y los corchetes [ ].
+print('Imprime la clave unString:', object['unString']);
+
+// También se puede acceder utilizando la notación con punto.
+print('Print unaLista:', object.unaLista);
+</script>
+</div>
+<div id="funciones" class="section level3">
+<h3>Funciones</h3>
+<p>Las funciones son otra forma de mejorar la legibilidad y reutilización del código mediante el agrupamiento de conjuntos de operaciones.</p>
+<ul>
+<li>Para definir una función se utiliza la palabra clave <em>function</em>.</li>
+<li>Los nombres de las funciones <em>comienzan con una letra y tienen un par de paréntesis al final</em>.</li>
+<li>Las funciones a menudo toman <em>parámetros</em> o <em>argumentos</em> que le proveen información a la función qué se utiliza junto con las intrucciones que definen que tiene que hacer. Estos parámetros van dentro de los paréntesis ().</li>
+<li>El conjunto de declaraciones que componen la función van dentro de las llaves { }. La palabra clave <em>return</em> indica cuál es la salida de la función.</li>
+</ul>
+<p>Una de las formas de declarar una función</p>
+<pre class="js"><code>// La función debe declararse antes de ser invocada
+//declaración:
+
+var probando_Funcion = function(argumento) {
+  var mensaje = &#39; Esto es una &#39; + argumento;
+  return mensaje;
+};
+
+// aqui la llamamos o invocamos a la funcion con el parametro.
+
+print(&#39;Llamamos a la funcion&#39;, probando_Funcion(&#39;prueba&#39;));</code></pre>
+<script type="text/javascript">
+// La función debe declararse antes de ser invocada
+//declaración:
+
+var probando_Funcion = function(argumento) {
+  var mensaje = ' Esto es una ' + argumento;
+  return mensaje;
+};
+
+// aqui la llamamos o invocamos a la funcion con el parametro.
+
+print('Llamamos a la funcion', probando_Funcion('prueba'));
+</script>
+</div>
+<div id="objetos-de-gee" class="section level3">
+<h3>Objetos de GEE</h3>
+<p>Son primitivas y objetos JavaScript en contenedores de Earth Engine para enviarlos al servidor y procesarlos en Google. En el siguiente código de ejemplo <em>“Donde esta el string?”</em> es una cadena de texto en el <em>cliente</em> mientras que <em>“Esta en el server”</em> es una cadena que fue enviada a los servidores de GEE para ser evaluada y luego devuelta.</p>
+<pre class="js"><code>// Defino una cadena en el servidor.
+var serverString = ee.String(&#39;Está en el server.&#39;);
+print(&#39;¿Donde está el String?&#39;, serverString);</code></pre>
+<script type="text/javascript">
+// Defino una cadena en el servidor.
+var serverString = ee.String('Está en el server.');
+print('¿Donde está el String?', serverString);
+</script>
+<p>Los métodos <em>ee.String()</em> y <em>ee.Number()</em> son constructores.</p>
+<p>Estos contructores tiene sus argumentos que ponemos en un contenedor y que al restornar como un objeto EE podemos manipularlo en nuestro código. Un constructor comienza siempre con <em>ee</em> y retorna un <em>objeto Earth Engine</em> (EE). Para operar con un objeto de EE vamos a utilizar los métodos que son provistos según la clase de objeto con la que trabajamos. Para el ejemplo anterior vamos a convertir en mayúsculas la cadena contenida en <em>serverString</em>.</p>
+<pre class="js"><code>var metodo= serverString.toUpperCase();
+print (metodo);</code></pre>
+<script type="text/javascript">
+var metodo= serverString.toUpperCase();
+print (metodo);
+</script>
+<p><strong>Listas</strong></p>
+<p>Podemos hacer una lista de JavaScript como un objeto <em>ee.List</em> en el servidor. Podemos recuperar un elemento de la lista con el operador <em>get</em>. Recuerde que esta lista solo existe en el servidor, por lo que EE nos permite acceder a esos objetos sólo a través de sus métodos.</p>
+<pre class="js"><code>// Ejemplos de listas,  
+var miObjetoList = ee.List([&#39;Un Texto&#39;, 22888555, 45, 4249898, 5]);
+
+// Usamos un método de ee.List para recuperar un valor
+var recupero= miObjetoList.get(0);
+
+print (recupero)</code></pre>
+<script type="text/javascript">
+// Ejemplos de listas,  
+var miObjetoList = ee.List(['Un Texto', 22888555, 45, 4249898, 5]);
+
+// Usamos un método de ee.List para recuperar un valor
+var recupero= miObjetoList.get(0);
+
+print (recupero)
+</script>
+<p><strong>Casting</strong></p>
+<p>Para operar con los números almacenados en un objeto debo “castear” el resultado ya que GEE no sabe el tipo de objeto que es retornado por un método.</p>
+<p>Si al código anterior agregamos:</p>
+<pre class="js"><code>var valor1=   eeList.get(2)
+var valor2=   eeList.get(4)
+var sumatoria =  valor1.add(valor2)</code></pre>
+<script type="text/javascript">
+var valor1=   eeList.get(2)
+var valor2=   eeList.get(4)
+var sumatoria =  valor1.add(valor2)
+</script>
+<p>tendremos error: <code>valor1.add is not a function</code></p>
+<p>Esto es común con la función <em>get()</em>, que puede devolver todo tipo de objetos de Earth Engine. Para corregirlo, utilice el constructor <em>ee.Number</em> para “castear” el resultado:</p>
+<pre class="js"><code>var valor1=   eeList.get(2);
+var valor2=   eeList.get(4);
+
+var cast_valor1= ee.Number(valor1);
+var cast_valor2= ee.Number(valor2);
+
+var sumatoria =  cast_valor1.add(cast_valor2);
+print (sumatoria);</code></pre>
+<script type="text/javascript">
+var valor1=   eeList.get(2);
+var valor2=   eeList.get(4);
+
+var cast_valor1= ee.Number(valor1);
+var cast_valor2= ee.Number(valor2);
+
+var sumatoria =  cast_valor1.add(cast_valor2);
+print (sumatoria);
+</script>
+</div>
+</div>
+<div id="resumen-mapa-conceptual-de-la-lección" class="section level2">
+<h2>Resumen: mapa conceptual de la lección</h2>
+<div class="figure">
+<img src="img/GEE_Lesson_2.png" alt="" />
+<p class="caption">Mapa Conceptual de la lección 1</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
